@@ -31,6 +31,11 @@
   </div>
   <script>
     const soal = [...]; // soal tetap diisi dari sebelumnya
+    {
+  q: "Apa nama zat aktif dari amoksisilin?",
+  o: ["Asam clavulanat", "Penisilin", "Amoksisilin trihidrat", "Kloramfenikol", "Cefadroxil"],
+  a: 2 // jawaban benar (index ke-2 = C)
+    }
     let i=0,score=0,userAnswers=Array(soal.length).fill(null);
     function tampil(){
       document.getElementById("question").innerText=soal[i].q;
