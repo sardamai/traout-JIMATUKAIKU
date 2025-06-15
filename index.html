@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRYOUT JIMAT UKAIKU</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    body{font-family:'Poppins',sans-serif;margin:20px;background:#f4f4f4}
+    #quiz-box{background:#fff;padding:20px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,.1)}
+    .question{font-weight:600;font-size:18px}
+    .option{margin:8px 0}
+    .btn{padding:8px 12px;margin-top:10px;border:none;border-radius:5px;cursor:pointer;background-color:#007bff;color:#fff}
+    .btn:hover{background:#0056b3}
+    #score{font-weight:bold;margin-top:15px}
+    #timer{font-weight:bold;color:red;margin-bottom:10px}
+    #brand{font-size:24px;font-weight:700;margin-bottom:15px;color:#007bff;text-align:center;letter-spacing:1px}
+  </style>
+</head>
+<body>
+  <div id="quiz-box">
+    <div id="brand">TRYOUT JIMAT UKAIKU</div>
+    <div id="timer"></div>
+    <div id="question" class="question"></div>
+    <div id="options"></div>
+    <div style="margin-top: 10px;">
+      <button onclick="prevQuestion()" class="btn">Sebelumnya</button>
+      <button onclick="nextQuestion()" class="btn">Selanjutnya</button>
+    </div>
+    <div id="score"></div>
+  </div>
+  <script>
+    const soal = [...]; // soal tetap diisi dari sebelumnya
+    let i=0,score=0,userAnswers=Array(soal.length).fill(null);
+    function tampil(){
+      document.getElementById("question").innerText=soal[i].q;
+      let opts=soal[i].o.map((x,j)=>`<div class='option'><input type='radio' name='opt' value='${j}' ${userAnswers[i]===j?'checked':''}> ${x}</div>`).join('');
+      document.getElementById("options").innerHTML=opts;
+    }
+    function nextQuestion(){
+      simpanJawaban();
+      if(i<soal.length-1)i++;
+      tampil();
+    }
+    function prevQuestion(){
+      simpanJawaban();
+      if(i>0)i--;
+      tampil();
+    }
+    function simpanJawaban(){
+      let val=document.querySelector('input[name=opt]:checked');
+      if(val)userAnswers[i]=parseInt(val.value);
+    }
+    function selesai(){
+      simpanJawaban();
+      score = userAnswers.reduce((acc, val, idx)=> val===soal[idx].a ? acc+1 : acc, 0);
+      let hasil = score / soal.length * 100;
+      let status = hasil >= 70 ? "LULUS" : "TIDAK LULUS";
+      let review = soal.map((s,qIdx)=>{
+        let benar = s.a;
+        let user = userAnswers[qIdx];
+        return `<p><strong>Soal ${qIdx+1}:</strong> ${s.q}<br>Jawaban Anda: ${s.o[user] || '-'}<br>Jawaban Benar: ${s.o[benar]}</p>`;
+      }).join('');
+      document.getElementById("quiz-box").innerHTML=`<h3>Selesai!</h3><div id='score'>Skor Anda: ${score} dari ${soal.length} (${hasil.toFixed(2)}%)<br>Status: <strong>${status}</strong></div><hr><h4>Review Jawaban:</h4>${review}`;
+    }
+    let totalSeconds=50*60;
+    function updateTimer(){
+      let m=Math.floor(totalSeconds/60),s=totalSeconds%60;
+      document.getElementById("timer").innerText=`Sisa waktu: ${m}:${s<10?"0":""}${s}`;
+      if(totalSeconds>0){totalSeconds--;setTimeout(updateTimer,1000);}else{selesai();}
+    }
+    tampil();updateTimer();
+  </script>
+</body>
+</html>
